@@ -11,20 +11,24 @@ const webhookClient = new WebhookClient(
   process.env.WEBHOOK_TOKEN
 );
 
+const PREFIX = "$";
+
 client.on("ready", () => {
   console.log(`${client.user.tag} s'est connecté`);
 });
 
+client.on("guildMemberAdd", (member) => {
+  if (member.author.bot) return;
+  const channel = member.guild.channels.cache.find(
+    (ch) => ch.name === "bienvenue"
+  );
+  if (!channel) return;
+  channel.send(`Bienvenue sur le serveur, @${member}`);
+});
+
 client.on("message", (message) => {
-  if (message.channel.name === "général") {
-    console.log(
-      `${message.author.username} a écrit un message dans ${message.channel.name}`
-    );
-  } else {
-    console.log(
-      `Le message ne vient pas de général mais du channel ${message.channel.name}`
-    );
-  }
+  if (message.author.bot) return;
+  return message.reply(`merci pour le message !`);
 });
 
 client.on("messageReactionAdd", (messageReaction, user) => {
