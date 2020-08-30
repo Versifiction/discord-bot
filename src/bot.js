@@ -27,8 +27,30 @@ client.on("guildMemberAdd", (member) => {
 });
 
 client.on("message", (message) => {
-  if (message.author.bot) return;
-  return message.reply(`merci pour le message !`);
+  if (!message.guild) return;
+
+  if (message.content.startsWith("!kick")) {
+    // Read more about mentions over at https://discord.js.org/#/docs/main/master/class/MessageMentions
+    const user = message.mentions.users.first();
+    if (user) {
+      const member = message.guild.member(user);
+      if (member) {
+        member
+          .kick("Optional reason that will display in the audit logs")
+          .then(() => {
+            message.reply(`${user.tag} a bien été kické`);
+          })
+          .catch((err) => {
+            message.reply("Je n'ai pas pu kicker l'utilisateur :(");
+            console.error(err);
+          });
+      } else {
+        message.reply("Cet utilisateur n'est pas dans le serveur");
+      }
+    } else {
+      message.reply("Tu n'as pas mentionné l'utilisateur à kicker");
+    }
+  }
 });
 
 client.on("messageReactionAdd", (messageReaction, user) => {
