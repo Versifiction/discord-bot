@@ -17,14 +17,14 @@ client.on("ready", () => {
   console.log(`${client.user.tag} s'est connecté`);
 });
 
-client.on("guildMemberAdd", (member) => {
-  if (member.author.bot) return;
-  const channel = member.guild.channels.cache.find(
-    (ch) => ch.name === "bienvenue"
-  );
-  if (!channel) return;
-  channel.send(`Bienvenue sur le serveur, @${member}`);
-});
+// client.on("guildMemberAdd", (member) => {
+//   if (member.author.bot) return;
+//   const channel = member.guild.channels.cache.find(
+//     (ch) => ch.name === "bienvenue"
+//   );
+//   if (!channel) return;
+//   channel.send(`Bienvenue sur le serveur, @${member}`);
+// });
 
 client.on("message", (message) => {
   if (!message.guild) return;
@@ -39,6 +39,30 @@ client.on("message", (message) => {
           .kick("Optional reason that will display in the audit logs")
           .then(() => {
             message.reply(`${user.tag} a bien été kické`);
+          })
+          .catch((err) => {
+            message.reply("Je n'ai pas pu kicker l'utilisateur :(");
+            console.error(err);
+          });
+      } else {
+        message.reply("Cet utilisateur n'est pas dans le serveur");
+      }
+    } else {
+      message.reply("Tu n'as pas mentionné l'utilisateur à kicker");
+    }
+  }
+
+  if (message.content.startsWith("!ban")) {
+    const user = message.mentions.users.first();
+    if (user) {
+      const member = message.guild.member(user);
+      if (member) {
+        member
+          .ban({
+            reason: "Il a été mauvais",
+          })
+          .then(() => {
+            message.reply(`${user.tag} a bien été banni`);
           })
           .catch((err) => {
             message.reply("Je n'ai pas pu kicker l'utilisateur :(");
